@@ -41,5 +41,24 @@ HAL_TIM_Encoder_Start_IT(&htim1, TIM_CHANNEL_ALL);
 encoderValue = __HAL_TIM_GetCounter(&htim1);
 ```
 
+### AC voltage control
+1. Pin configuration 
 
+| STM32 | Module | description |
+| :---: | :---: | :--- |
+| PB0 | AC Detec| pull up |
+| PB1 | Triac |  |
 
+2. code 
+PB0 should be an EXT pin 
+``` 
+/* proccess when interrupt */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+	if(GPIO_Pin == ACDET_Pin){
+		SETFLAG(FLAG_ACDET_TRIGGER, flag);
+        // control angle to set triac base on time which is calculated by PID
+		__HAL_TIM_SET_COUNTER(&htim4, (uint16_t)(triac.giaTriDieuKhien * 1000));
+//		__HAL_TIM_SET_COUNTER(&htim4, 9000);
+	}
+}
+```
