@@ -4,8 +4,8 @@
 
 ### Module 7 segment with two ic 74595
 1. Pin configuration.
-<!-- cách ra 1 dòng để git hiểu là xuống hàng -->
-| STM32 | 74595  |
+
+| STM32 | 74595  | <!-- cách ra 1 dòng để git hiểu là xuống hàng -->
 | :---: | :---: | <!-- :--- là căn trái :---: là căn giữa ---: là căn phải trong cột -->
 | PA4 | SER |
 | PA5 | OE |
