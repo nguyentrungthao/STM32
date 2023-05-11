@@ -36,7 +36,9 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-const uint8_t code7segment[] = {};
+
+/* this code only use for this version board */
+const char code7seg[] = {0xD7, 0x14, 0xCD, 0x5D, 0x1E, 0x5B, 0xDB, 0x15, 0xDF, 0x5F};
 
 /* USER CODE END PM */
 
