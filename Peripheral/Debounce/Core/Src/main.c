@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "Lib1.h"
+#include "BOARD_V0_1.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -38,14 +39,14 @@
 /* USER CODE BEGIN PM */
 
 /* this code only use for this version board */
-const char code7seg[] = {0xD7, 0x14, 0xCD, 0x5D, 0x1E, 0x5B, 0xDB, 0x15, 0xDF, 0x5F};
 
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+extern char code7seg[];
+extern uint8_t s7seg[7];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -89,6 +90,9 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
+  for(uint8_t i = 0; i < 7; i++){
+	  s7seg[i] = code7seg[i];
+  }
 
   /* USER CODE END 2 */
 
@@ -96,9 +100,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  blinkled(LED_GPIO_Port, LED_Pin, 1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	  Scan7seg();
   }
   /* USER CODE END 3 */
 }
@@ -152,11 +159,22 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, SER_Pin|OE_Pin|RCLK_Pin|SRCLK_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : LED_Pin */
+  GPIO_InitStruct.Pin = LED_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : SER_Pin OE_Pin RCLK_Pin SRCLK_Pin */
   GPIO_InitStruct.Pin = SER_Pin|OE_Pin|RCLK_Pin|SRCLK_Pin;
@@ -178,6 +196,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
 
 /* USER CODE END 4 */
 
