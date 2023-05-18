@@ -10,29 +10,25 @@
 #define _74595_H_
 //#define OPEN_DRAIN
 #include "main.h"
+#include "stdlib.h"
 #include "string.h"
+#include "stdbool.h"
 
 #define VERSION_74595_LIB_asString Ver0.1
 
-#define LSB_FIRST 0
-#define MSB_FIRST 1
+//#define LSB_FIRST false
+//#define MSB_FIRST true
 
-typedef struct {
-    GPIO_TypeDef *GPIO_Port;
-    uint16_t GPIO_pin;
-} IC74595_pinInfoTypedef;
-
-//object
-typedef struct {
-	IC74595_pinInfoTypedef SER, OE, SRCLK, RCLK;
-	uint8_t numberOfIC;
-} IC74595_typedef;
+typedef enum {
+	LSB_FIRST 	= 0u,
+	MSB_FIRST 	= 1u
+} IC74595_ShiftFirstTypedef;
 
 typedef enum{
-	IC74595_LATCH = 0u,
-	IC74595_CLK,
-	IC74595_DS,
-	IC74595_OE
+	IC74595_SER 	= 0u,
+	IC74595_SRCLK 	= 1u,
+	IC74595_RCLK  	= 2u,
+	IC74595_OE		= 3u
 }IC74595_pinNameTypedef;
 
 typedef enum{
@@ -42,27 +38,42 @@ typedef enum{
 //	IC74595_BEYOND_MAX_CASCADE,
 }IC74595_statusTypedef;
 
-static IC74595_typedef *pIC74595 = NULL;
+typedef struct {
+    GPIO_TypeDef *GPIO_port;
+    uint16_t GPIO_pin;
+} IC74595_pinInfoTypedef;
 
-IC74595_statusTypedef IC74595_InitPinAndNumberOfIC(IC74595_typedef *IC74595, GPIO_TypeDef *SERPort, uint16_t SERPin, GPIO_TypeDef *SRCLKPort, uint16_t SRCLKPin, GPIO_TypeDef *RCLKPort, uint16_t RCLKPin, GPIO_TypeDef *OEPort, uint16_t OEPin, uint8_t numberOfIC);
-IC74595_statusTypedef IC74595_ShiftOut(uint8_t *pData);
+//object
+typedef struct {
+	IC74595_pinInfoTypedef SER, OE, SRCLK, RCLK;
+	uint8_t *data;
+	uint8_t numberOfIC;
+	IC74595_ShiftFirstTypedef shift;
+} IC74595_HandelTypedef;
 
-IC74595_statusTypedef IC74595_SetPin(uint8_t , uint8_t);
-IC74595_statusTypedef IC74595_ResetPin(uint8_t , uint8_t);
-IC74595_statusTypedef IC74595_SetByte(uint8_t , uint8_t);
-IC74595_statusTypedef IC74595_ReseByte(uint8_t , uint8_t);
 
-void IC74595_SetAllHigh();
-void IC74595_SetAllLow();
+IC74595_statusTypedef IC74595_Init(IC74595_HandelTypedef *IC74595_Object, const uint8_t numberOfIC, const IC74595_ShiftFirstTypedef shift, const GPIO_TypeDef *SERPort, const uint16_t SERPin, const GPIO_TypeDef *SRCLKPort, const uint16_t SRCLKPin, const GPIO_TypeDef *RCLKPort, const uint16_t RCLKPin, const GPIO_TypeDef *OEPort, const uint16_t OEPin);
+IC74595_statusTypedef IC74595_SetOject(const IC74595_HandelTypedef *IC74595_Object);
+IC74595_statusTypedef IC74595_ShiftOut();
+IC74595_statusTypedef IC74595_Disenable();
+IC74595_statusTypedef IC74595_Enable();
 
-uint8_t IC74595_GetNumberOfIC();
-uint8_t IC74595_GetBit(uint8_t, uint8_t);
-uint8_t IC74595_GetByte(uint8_t, uint8_t);
-uint8_t *IC74595_GetAll();
-IC74595_typedef IC74595_GetAssignPin();
 
-void IC74595_Disenable();
-void IC74595_Enable();
+
+IC74595_statusTypedef IC74595_SetPin(const uint8_t orderfOfIC, const uint8_t bit);
+IC74595_statusTypedef IC74595_SetByte(const uint8_t orderfOfIC, const uint8_t byte);
+IC74595_statusTypedef IC74595_SetAllOutIC(const uint8_t *data);
+
+IC74595_statusTypedef IC74595_ResetPin(const uint8_t orderfOfIC, const uint8_t bit);
+IC74595_statusTypedef IC74595_ReseByte(const uint8_t orderfOfIC);
+IC74595_statusTypedef IC74595_ResetAllOutIC();
+
+
+IC74595_statusTypedef IC74595_GetNumberOfIC(uint8_t *numberOfIC);
+IC74595_statusTypedef IC74595_GetByte(const uint8_t orderfOfIC, uint8_t *byte);
+IC74595_statusTypedef IC74595_GetAssignPin(const IC74595_pinNameTypedef choosePin, IC74595_pinInfoTypedef *pin);
+IC74595_statusTypedef IC74595_CheckToggleAllPin(const uint32_t timeSwitch, uint8_t repeat);
+IC74595_statusTypedef IC74595_CheckOneByOneAllPin(const uint16_t timeSwitchPin, uint8_t repeat);
 
 
 

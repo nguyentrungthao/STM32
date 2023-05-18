@@ -13,6 +13,8 @@
 #include "stdlib.h"
 #include "74HC595.h"
 
+extern uint8_t s7seg[7];
+
 void Scan7seg();
 
 #endif //end _BORAD_V0_1_H
